@@ -24,4 +24,5 @@ Its a map of a project that I had that was make the most complete and with more 
 
 # Purpouse:
 
-My mission was show how lifefull was Mario Maker 1, principally for 3DS
+My mission was show how lifefull was Mario Maker 1, principally the 3DS Version
+maybe the map quantity become greater, but for now, these are the focus
