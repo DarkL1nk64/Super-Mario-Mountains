@@ -116,6 +116,31 @@ uploadInput.accept = ".txt"; // Restrict to .txt files
 uploadInput.onchange = importMapList;
 document.body.appendChild(uploadInput);
 
+function loadMapListFromFile(filePath) {
+  fetch(filePath)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.statusText}`);
+      }
+      return response.text(); // Read file content as text
+    })
+    .then(content => {
+      // Parse the content into a 2D array
+      const rows = content.trim().split("\n");
+      mapList = rows.map(row => row.split(",").map(Number));
+
+      console.log("MapList loaded successfully!");
+      console.log(mapList);
+    })
+    .catch(error => {
+      console.error("Error loading mapList file:", error);
+    });
+}
+
+// Call the function during game initialization
+loadMapListFromFile("data/montains_montainous/level.txt");
+
+
 // MAIN FUNCTIONS --------------------------------------------------
 
 let lastTime = performance.now();
