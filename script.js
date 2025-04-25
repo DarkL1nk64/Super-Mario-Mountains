@@ -138,7 +138,7 @@ function loadMapListFromFile(filePath) {
 }
 
 // Call the function during game initialization
-loadMapListFromFile("data/montains_montainous/level.txt");
+loadMapListFromFile("data/montains_mon/level.txt");
 
 
 // MAIN FUNCTIONS --------------------------------------------------
