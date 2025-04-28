@@ -60,6 +60,15 @@ document.addEventListener("mousemove", function (event) {
   mouseY = event.clientY - 8;
 });
 
+const keys={};
+
+document.addEventListener("keydown", function(event) {
+	keys[event.key]=true;
+	if (devOpt.consolePress){
+		console.log(event.key);
+	}
+});
+
 // Function to export mapList to a .txt file
 function exportMapList() {
   // Convert mapList array into a string
@@ -166,6 +175,15 @@ function _update(deltaTime) {
 		selectorX = Math.floor((mouseX)/(sprSize));
 		selectorY = Math.floor((mouseY)/(sprSize));
 	}
+	
+	if (keys["left"]) {
+		camX += selecBlock;
+	}
+	
+	if (keys["right"]) {
+		camX -= selecBlock;
+	}
+	
 	if (options.seeMap) {
 		camX+=0.5;
 	}
