@@ -61,12 +61,18 @@ document.addEventListener("mousemove", function (event) {
 });
 
 const keys={};
+const keyPr={};
 
 document.addEventListener("keydown", function(event) {
 	keys[event.key]=true;
+	keyPr[event.key]=undefined;
 	if (devOpt.consolePress){
 		console.log(event.key);
 	}
+});
+
+document.addEventListener("keyup", function(event) {
+	keys[event.key]=false;
 });
 
 // Function to export mapList to a .txt file
@@ -176,12 +182,17 @@ function _update(deltaTime) {
 		selectorY = Math.floor((mouseY)/(sprSize));
 	}
 	
-	if (keys["left"]) {
-		camX += selecBlock;
+	if (keys["d"]) {
+		if (keyPr["d"]!=true) {
+			camX += sprSize;
+		}
+		keyPr["d"]=true;
+	} else {
+		keyPr["d"]=false
 	}
 	
-	if (keys["right"]) {
-		camX -= selecBlock;
+	if (keys["a"]) {
+		camX -= sprSize;
 	}
 	
 	if (options.seeMap) {
@@ -208,6 +219,9 @@ function _draw() {
 	// Draw Mouse Coordinates
 	ctx.fillText(`Mouse X: ${mouseX} Mouse Y: ${mouseY}`, 0, 20);
 	ctx.fillText(`Selector X: ${selectorX} Selector Y: ${selectorY}`, 0, 40);
+	ctx.fillText(`Cam X: ${camX} Cam Y: ${camY}`, 0, 60);
+	ctx.fillText(keys["d"], 0, 80);
+	ctx.fillText(keys["a"], 0, 100);
 }
 
 // Only start the gameLoop once image is fully loaded
