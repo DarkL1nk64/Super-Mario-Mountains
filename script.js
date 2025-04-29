@@ -6,8 +6,8 @@ const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 
 const devmode = true;
-const devOpt = { showColl: true };
-let performOpt = { shadows: false };
+const devOpt = {showColl: true};
+let performOpt = {shadow: false};
 let options = {seeMap: false};
 
 let tileset = {};
@@ -18,6 +18,9 @@ let sprSize = 48;
 
 let selectorX = 0;
 let selectorY = 0;
+
+let camOffsetX = 0;
+let camOffsetY = 0;
 
 let selecBlock = 73;
 
@@ -49,10 +52,10 @@ tileset["overworld"].onload = () => {
 };
 
 document.addEventListener('click', () => {
-	//if (mapList[selectorY][selectorX]) {
+	if (mouseX<canvas.width && mouseX>0 && mouseY<canvas.height && mouseY>0) {
 		mapList[selectorY][selectorX] = selecBlock;
 		console.log(`Block placed: ${selecBlock}`);
-	//}
+	}
 });
 
 document.addEventListener("mousemove", function (event) {
@@ -178,8 +181,8 @@ function gameLoop() {
 
 function _update(deltaTime) {
 	if (mouseX>0 && mouseY>0 && mouseX<canvas.width && mouseY<canvas.height) {
-		selectorX = Math.floor((mouseX)/(sprSize));
-		selectorY = Math.floor((mouseY)/(sprSize));
+		selectorX = Math.floor((mouseX)/(sprSize) + camOffsetX);
+		selectorY = Math.floor((mouseY)/(sprSize) + camOffsetY);
 	}
 	
 	if (keys["d"]) {
@@ -188,12 +191,22 @@ function _update(deltaTime) {
 		}
 		keyPr["d"]=true;
 	} else {
-		keyPr["d"]=false
+		keyPr["d"]=false;
 	}
 	
 	if (keys["a"]) {
-		camX -= sprSize;
+		if (keyPr["a"]!=true) {
+			if (camX>0) {
+				camX-=sprSize;
+			}
+		}
+		keyPr["a"]=true;
+	} else {
+		keyPr["a"]=false;
 	}
+	
+	camOffsetX=camX/sprSize;
+	camOffsetY=camY/sprSize;
 	
 	if (options.seeMap) {
 		camX+=0.5;
@@ -202,18 +215,37 @@ function _update(deltaTime) {
 
 function _draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	for (let y = 0; y < mapList.length; y++) {
-		for (let i = 0; i < mapList[y].length; i++) {
-			let tile = mapList[y][i];
-			let imgX = tile % 16; // Compute horizontal frame
-			let imgY = Math.floor(tile / 16); // Compute vertical frame
-			ctx.drawImage(tileset["overworld"],imgX * 16,imgY * 16,16, 16,i * sprSize-camX,y * sprSize-camY,sprSize, sprSize);
+	if (tileset["overworld"].complete) {
+		if (performOpt.shadow) {
+			ctx.globalAlpha=0.5;
+			ctx.filter="brightness(0)";
+			for (let y = 0; y < mapList.length; y++) {
+				for (let i = 0; i < mapList[y].length; i++) {
+					let tile = mapList[y][i];
+					if (tile!=0){
+						let imgX = tile % 16; // Compute horizontal frame
+						let imgY = Math.floor(tile / 16); // Compute vertical frame
+						ctx.drawImage(tileset["overworld"],imgX * 16,imgY * 16,16, 16,i * sprSize-camX+(sprSize/5),y * sprSize-camY+(sprSize/5),sprSize, sprSize);
+					}
+				}
+			}
+		
+			ctx.globalAlpha=1;
+			ctx.filter="none";
 		}
+		for (let y = 0; y < mapList.length; y++) {
+			for (let i = 0; i < mapList[y].length; i++) {
+				let tile = mapList[y][i];
+				let imgX = tile % 16; // Compute horizontal frame
+				let imgY = Math.floor(tile / 16); // Compute vertical frame
+				ctx.drawImage(tileset["overworld"],imgX * 16,imgY * 16,16, 16,i * sprSize-camX,y * sprSize-camY,sprSize, sprSize);
+			}
+		}
+		
 	}
   
 	ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-	ctx.fillRect(selectorX*sprSize, selectorY*sprSize, sprSize, sprSize);
+	ctx.fillRect((selectorX-camOffsetX)*sprSize, (selectorY-camOffsetY)*sprSize, sprSize, sprSize);
 	ctx.fillStyle = "black";
 
 	// Draw Mouse Coordinates
@@ -222,6 +254,7 @@ function _draw() {
 	ctx.fillText(`Cam X: ${camX} Cam Y: ${camY}`, 0, 60);
 	ctx.fillText(keys["d"], 0, 80);
 	ctx.fillText(keys["a"], 0, 100);
+	ctx.fillText(`Block: ${mapList[selectorY][selectorX]}`, 0, 120);
 }
 
 // Only start the gameLoop once image is fully loaded
