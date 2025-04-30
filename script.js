@@ -205,6 +205,27 @@ function _update(deltaTime) {
 		keyPr["a"]=false;
 	}
 	
+	if (keys["w"]) {
+		if (keyPr["w"]!=true) {
+			camY-=sprSize;
+		}
+		keyPr["w"]=true;
+	} else {
+		keyPr["w"]=false;
+	}
+	
+	if (keys["s"]) {
+		if (keyPr["s"]!=true) {
+			if (camY<0) {
+				camY+=sprSize;				
+			}
+
+		}
+		keyPr["s"]=true;
+	} else {
+		keyPr["s"]=false;
+	}
+	
 	camOffsetX=camX/sprSize;
 	camOffsetY=camY/sprSize;
 	
